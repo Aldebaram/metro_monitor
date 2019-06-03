@@ -25,8 +25,6 @@ class Metro {
       id: json['id']
     );
   }
-
-  
 }
 
 class MetroList {

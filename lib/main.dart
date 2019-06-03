@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'metro.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'detailsView.dart';
 
 void main() => runApp(MyApp());
 
@@ -171,6 +172,9 @@ class _MyHomePageState extends State<MyHomePage> {
           trailing: Text(DateFormat.yMd()
               .add_Hm()
               .format(DateTime.parse(linha.modificado).toLocal())),
+          onTap: () {
+            Navigator.push(context,MaterialPageRoute(builder: (context) => new Details(linha.codigo)));
+            },
         ),
       ),
     );
