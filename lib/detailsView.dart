@@ -95,7 +95,6 @@ class Details extends StatelessWidget {
     formatDesc(String situacao, String descricao) {
       if (descricao != null) {
         String completo = descricao;
-        debugPrint(completo);
         return Text(completo,textScaleFactor: 1);
       } else {
         return Text(situacao,textScaleFactor: 1);
