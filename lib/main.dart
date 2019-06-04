@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/date_symbol_data_local.dart';
 import 'metro.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -162,6 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Container card(Metro linha) {
+    initializeDateFormatting("pt_BR",null);
     return new Container(
       height: 100,
       child: Card(
@@ -169,12 +171,14 @@ class _MyHomePageState extends State<MyHomePage> {
           leading: iconHandler(linha.situacao),
           title: getNome(linha.codigo),
           subtitle: Text(linha.situacao),
-          trailing: Text(DateFormat.yMd()
-              .add_Hm()
+          trailing: Text(DateFormat("HH:mm", "pt_BR")
               .format(DateTime.parse(linha.modificado).toLocal())),
           onTap: () {
-            Navigator.push(context,MaterialPageRoute(builder: (context) => new Details(linha.codigo)));
-            },
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new Details(linha.codigo)));
+          },
         ),
       ),
     );
@@ -212,7 +216,10 @@ class _MyHomePageState extends State<MyHomePage> {
               } else if (snapshot.hasError) {
                 return new Text("${snapshot.error}");
               }
-              return new CircularProgressIndicator();
+              return Container(
+                padding: EdgeInsets.only(left: 185, right: 185, top: 20),
+                child: new CircularProgressIndicator(),
+              );
             },
           )
         ],

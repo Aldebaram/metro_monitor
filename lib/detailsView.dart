@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'details.dart';
+import 'mapView.dart';
 
 class Details extends StatelessWidget {
-  num codigo;
+  int codigo;
   Details(int codigo) {
     this.codigo = codigo;
   }
@@ -22,7 +24,7 @@ class Details extends StatelessWidget {
         // If server returns an OK response
         final jsonResponse = json.decode(response.body);
         DetailList lista = new DetailList.fromJson(jsonResponse);
-        for (var i = 0; i < 15; i++) {
+        for (var i = 0; i < 10; i++) {
           final response2 = await http.get(
               'https://www.diretodostrens.com.br/api/status/id/' +
                   lista.details[i].id.toString());
@@ -94,9 +96,9 @@ class Details extends StatelessWidget {
       if (descricao != null) {
         String completo = descricao;
         debugPrint(completo);
-        return Text(completo);
+        return Text(completo,textScaleFactor: 1);
       } else {
-        return Text(situacao);
+        return Text(situacao,textScaleFactor: 1);
       }
     }
 
@@ -138,6 +140,7 @@ class Details extends StatelessWidget {
     }
 
     Container card(FullDetail info) {
+      initializeDateFormatting("pt_BR", null);
       return new Container(
         height: 115,
         child: Card(
@@ -146,8 +149,9 @@ class Details extends StatelessWidget {
             title: getNome(info.codigo),
             subtitle: formatDesc(info.situacao, info.descricao),
             trailing: Text(
-              DateFormat.yMd().format(DateTime.parse(info.criado).toLocal()),
-              textScaleFactor: 0,
+              DateFormat("dd/MM - HH:mm", "pt_BR")
+                  .format(DateTime.parse(info.criado).toLocal()),
+              textScaleFactor: 0.7,
             ),
           ),
         ),
@@ -165,13 +169,26 @@ class Details extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.all(8.0),
         children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new MetroView()));
+            },
+            child: Card(
+              child: Container(
+                  alignment: Alignment(-0.8, 0),
+                  height: 315,
+                  child: Image.asset('lib/assets/img/map.jpg')),
+            ),
+          ),
           Card(
             child: Container(
               alignment: Alignment(-0.8, 0),
               height: 35,
-              child: Text("Historico",
-              textScaleFactor: 1.3,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              child: Text(
+                "Historico",
+                textScaleFactor: 1.3,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -186,7 +203,10 @@ class Details extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return new Text("${snapshot.error}");
               }
-              return new CircularProgressIndicator();
+              return Container(
+                padding: EdgeInsets.only(left: 185, right: 185, top: 20),
+                child: new CircularProgressIndicator(),
+              );
             },
           )
         ],
