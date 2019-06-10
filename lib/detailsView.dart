@@ -5,6 +5,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'details.dart';
 import 'mapView.dart';
+import 'package:flutter_cache_store/flutter_cache_store.dart';
+import 'common.dart';
 
 class Details extends StatelessWidget {
   int codigo;
@@ -40,103 +42,17 @@ class Details extends StatelessWidget {
       }
     }
 
-    Text getNome(num linhaId) {
-      switch (linhaId) {
-        case 1:
-          return Text('Linha 1 - Azul');
-          break;
-        case 2:
-          return Text('Linha 2 - Verde');
-          break;
-        case 3:
-          return Text('Linha 3 - Vermelha');
-          break;
-        case 4:
-          return Text('Linha 4 - Amarela');
-          break;
-        case 5:
-          return Text('Linha 5 - Lilás');
-          break;
-        case 6:
-          return Text('Linha 6 - ????');
-          break;
-        case 7:
-          return Text('Linha 7 - Rubi');
-          break;
-        case 8:
-          return Text('Linha 8 - Diamante');
-          break;
-        case 9:
-          return Text('Linha 9 - Esmeralda');
-          break;
-        case 10:
-          return Text('Linha 10 - Turquesa');
-          break;
-        case 11:
-          return Text('Linha 11 - Coral');
-          break;
-        case 12:
-          return Text('Linha 12 - Safira');
-          break;
-        case 13:
-          return Text('Linha 13 - Jade');
-          break;
-        case 14:
-          return Text('Linha 14 - ??????');
-          break;
-        case 15:
-          return Text('Linha 15 - Prata');
-          break;
-        default:
-          return Text('Linha ?');
-      }
-    }
+    
 
     formatDesc(String situacao, String descricao) {
       if (descricao != null) {
         String completo = descricao;
-        return Text(completo,textScaleFactor: 1);
+        return Text(completo, textScaleFactor: 1);
       } else {
-        return Text(situacao,textScaleFactor: 1);
+        return Text(situacao, textScaleFactor: 1);
       }
     }
 
-    Icon iconHandler(String situacao) {
-      situacao = situacao.toLowerCase();
-      if (situacao.contains("normal")) {
-        return Icon(
-          Icons.check,
-          color: Colors.green,
-          size: 40.0,
-        );
-      }
-
-      if (situacao.contains("diferenciada") ||
-          situacao.contains("parcial") ||
-          situacao.contains("velocidade reduzida")) {
-        return Icon(
-          Icons.warning,
-          color: Colors.yellow,
-          size: 40.0,
-        );
-      }
-
-      if (situacao.contains("paralisada")) {
-        return Icon(
-          Icons.report,
-          color: Colors.red,
-          size: 40.0,
-        );
-      }
-
-      if (situacao.contains("encerrada")) {
-        return Icon(
-          Icons.block,
-          color: Colors.black,
-          size: 40.0,
-        );
-      }
-    }
 
     Container card(FullDetail info) {
       initializeDateFormatting("pt_BR", null);
@@ -146,6 +62,8 @@ class Details extends StatelessWidget {
           child: ListTile(
             leading: iconHandler(info.situacao),
             title: getNome(info.codigo),
+            isThreeLine: true,
+             dense: true,
             subtitle: formatDesc(info.situacao, info.descricao),
             trailing: Text(
               DateFormat("dd/MM - HH:mm", "pt_BR")
@@ -166,6 +84,7 @@ class Details extends StatelessWidget {
         title: Text("Detalhes"),
       ),
       body: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(8.0),
         children: <Widget>[
           GestureDetector(
@@ -173,12 +92,10 @@ class Details extends StatelessWidget {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => new MetroView()));
             },
-            child: Card(
-              child: Container(
-                  alignment: Alignment(-0.8, 0),
-                  height: 315,
-                  child: Image.asset('lib/assets/img/map.jpg')),
-            ),
+            child: Container(
+                alignment: Alignment(-0.8, 0),
+                height: 315,
+                child: Image.asset('assets/img/map.jpg')),
           ),
           Card(
             child: Container(

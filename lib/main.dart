@@ -5,6 +5,8 @@ import 'metro.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'detailsView.dart';
+import 'package:flutter_cache_store/flutter_cache_store.dart';
+import 'common.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,17 +17,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Linhas do Metrô',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.indigo,
-      ),
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          brightness: Brightness.light,
+          primarySwatch: Colors.blueGrey,
+          accentColor: Colors.blueGrey),
       home: MyHomePage(title: 'Linhas do Metrô'),
     );
   }
@@ -68,102 +71,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Text getNome(num linhaId) {
-    switch (linhaId) {
-      case 1:
-        return Text('Linha 1 - Azul');
-        break;
-      case 2:
-        return Text('Linha 2 - Verde');
-        break;
-      case 3:
-        return Text('Linha 3 - Vermelha');
-        break;
-      case 4:
-        return Text('Linha 4 - Amarela');
-        break;
-      case 5:
-        return Text('Linha 5 - Lilás');
-        break;
-      case 6:
-        return Text('Linha 6 - ????');
-        break;
-      case 7:
-        return Text('Linha 7 - Rubi');
-        break;
-      case 8:
-        return Text('Linha 8 - Diamante');
-        break;
-      case 9:
-        return Text('Linha 9 - Esmeralda');
-        break;
-      case 10:
-        return Text('Linha 10 - Turquesa');
-        break;
-      case 11:
-        return Text('Linha 11 - Coral');
-        break;
-      case 12:
-        return Text('Linha 12 - Safira');
-        break;
-      case 13:
-        return Text('Linha 13 - Jade');
-        break;
-      case 14:
-        return Text('Linha 14 - ??????');
-        break;
-      case 15:
-        return Text('Linha 15 - Prata');
-        break;
-      default:
-        return Text('Linha ?');
-    }
-  }
 
-  void refresh() {
-    fetchPost();
+  Future<void> refresh() async {
+    await fetchPost();
     setState(() {});
   }
 
-  Icon iconHandler(String situacao) {
-    situacao = situacao.toLowerCase();
-    if (situacao.contains("normal")) {
-      return Icon(
-        Icons.check,
-        color: Colors.green,
-        size: 40.0,
-      );
-    }
-
-    if (situacao.contains("diferenciada") ||
-        situacao.contains("parcial") ||
-        situacao.contains("velocidade reduzida")) {
-      return Icon(
-        Icons.warning,
-        color: Colors.yellow,
-        size: 40.0,
-      );
-    }
-
-    if (situacao.contains("paralisada")) {
-      return Icon(
-        Icons.report,
-        color: Colors.red,
-        size: 40.0,
-      );
-    }
-
-    if (situacao.contains("encerrada")) {
-      return Icon(
-        Icons.block,
-        color: Colors.black,
-        size: 40.0,
-      );
-    }
-  }
 
   Container card(Metro linha) {
-    initializeDateFormatting("pt_BR",null);
+    initializeDateFormatting("pt_BR", null);
     return new Container(
       height: 100,
       child: Card(
@@ -171,6 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
           leading: iconHandler(linha.situacao),
           title: getNome(linha.codigo),
           subtitle: Text(linha.situacao),
+          isThreeLine: true,
+          dense: true,
           trailing: Text(DateFormat("HH:mm", "pt_BR")
               .format(DateTime.parse(linha.modificado).toLocal())),
           onTap: () {
@@ -202,33 +120,39 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: ListView(
-        padding: EdgeInsets.all(8.0),
-        children: <Widget>[
-          FutureBuilder<MetroList>(
-            future: fetchPost(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<Widget> lista = cardlist(snapshot.data);
-                return Column(
-                  children: lista.map((Widget item) => item).toList(),
+      body: RefreshIndicator(
+        onRefresh: refresh,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.all(8.0),
+          children: <Widget>[
+            FutureBuilder<MetroList>(
+              future: fetchPost(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Widget> lista = cardlist(snapshot.data);
+                  return Column(
+                    children: lista.map((Widget item) => item).toList(),
+                  );
+                } else if (snapshot.hasError) {
+                  return new Text("${snapshot.error}");
+                }
+                return Container(
+                  padding: EdgeInsets.only(left: 185, right: 185, top: 20),
+                  child: new CircularProgressIndicator(),
                 );
-              } else if (snapshot.hasError) {
-                return new Text("${snapshot.error}");
-              }
-              return Container(
-                padding: EdgeInsets.only(left: 185, right: 185, top: 20),
-                child: new CircularProgressIndicator(),
-              );
-            },
-          )
-        ],
+              },
+            ),
+          ],
+        ),
       ),
+      /*
       floatingActionButton: FloatingActionButton(
         onPressed: refresh,
         tooltip: 'Increment',
         child: Icon(Icons.refresh),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      */ // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
