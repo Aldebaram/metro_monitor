@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/date_symbol_data_local.dart';
 import 'metro.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -79,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   Container card(Metro linha) {
-    initializeDateFormatting("pt_BR", null);
+
     return new Container(
       height: 100,
       child: Card(
@@ -103,7 +102,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Container> cardlist(MetroList lista) {
-    return lista.metros.map(card).toList();
+    List<Container> cards =  new List();
+    for (var metro in lista.metros) {
+    cards.add(cardTile(metro, context));
+    }
+    return cards;
   }
 
   @override

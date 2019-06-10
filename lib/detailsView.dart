@@ -42,7 +42,7 @@ class Details extends StatelessWidget {
       }
     }
 
-    
+    /*
 
     formatDesc(String situacao, String descricao) {
       if (descricao != null) {
@@ -52,24 +52,56 @@ class Details extends StatelessWidget {
         return Text(situacao, textScaleFactor: 1);
       }
     }
-
+    
+    */
 
     Container card(FullDetail info) {
       initializeDateFormatting("pt_BR", null);
       return new Container(
-        height: 115,
+        height: 150,
+        width: 700,
         child: Card(
-          child: ListTile(
-            leading: iconHandler(info.situacao),
-            title: getNome(info.codigo),
-            isThreeLine: true,
-             dense: true,
-            subtitle: formatDesc(info.situacao, info.descricao),
-            trailing: Text(
-              DateFormat("dd/MM - HH:mm", "pt_BR")
-                  .format(DateTime.parse(info.criado).toLocal()),
-              textScaleFactor: 0.7,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 10),
+                child: iconHandler(info.situacao),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  if (info.situacao != null)
+                    Container(
+                      child: Text(
+                        info.situacao,
+                        textScaleFactor: 1.5,
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                        softWrap: true,
+                      ),
+                    ),
+                  if (info.descricao != null)
+                    Container(
+                      width: 250,
+                      child: Text(
+                        info.descricao,
+                        textAlign: TextAlign.center,
+                        softWrap: true,
+                      ),
+                    ),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.only(right: 10),
+                child: Text(
+                  DateFormat("HH:mm", "pt_BR")
+                      .format(DateTime.parse(info.criado).toLocal()),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -87,27 +119,35 @@ class Details extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(8.0),
         children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new MetroView()));
-            },
-            child: Container(
-                alignment: Alignment(-0.8, 0),
-                height: 315,
-                child: Image.asset('assets/img/map.jpg')),
-          ),
-          Card(
-            child: Container(
-              alignment: Alignment(-0.8, 0),
-              height: 35,
-              child: Text(
-                "Historico",
-                textScaleFactor: 1.3,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+          Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => new MetroView()));
+                  },
+                  child: Card(
+                    child: Container(
+                        alignment: Alignment(0, 0), 
+                        child: Image.asset('assets/img/map.jpg')),
+                  ),
+                ),
+                Card(
+                  child: Container(
+                    alignment: Alignment(-0.8, 0),
+                    height: 35,
+                    child: Text(
+                      "Historico",
+                      textScaleFactor: 1.3,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ]),
           FutureBuilder<List<FullDetail>>(
             future: fetchDetails(),
             builder: (context, snapshot) {

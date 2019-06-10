@@ -9,8 +9,9 @@ class MetroView extends StatelessWidget {
           title: Text("Mapa"),
         ),
         body: Container(
-          child: ZoomableImage(new AssetImage('assets/img/map.jpg'),
-              scale: 16.0),
+          child: ZoomableImage(
+            new AssetImage('assets/img/map.jpg'),
+          ),
         ));
   }
 }
