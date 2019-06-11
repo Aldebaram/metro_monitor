@@ -19,14 +19,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.12.0+2
-  intl: ^0.15.8
-  zoomable_image: ^1.3.1
-  flutter_cache_store: ^0.4.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  http: ^0.12.0+2
+  intl: ^0.15.8
+  flutter_cache_store: ^0.4.0
+  zoomable_image:
+    git: git://github.com/andersonmendess/flutter_zoomable_image
 
 dev_dependencies:
   flutter_test:
