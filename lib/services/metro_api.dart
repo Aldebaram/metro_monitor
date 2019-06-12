@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:metro_monitor/models/metro_list.dart';
 
 class MetroAPI {
-  final _baseAPI = "https://www.diretodostrens.com.br/api";
+  final _baseAPI = "https://direto-dos-trens.appspot.com/api";
   final _detailsLimit = 7;
 
   Future<MetroList> fetchStatus() async {
