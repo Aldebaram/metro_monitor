@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zoomable_image/zoomable_image.dart';
 
-class MetroView extends StatelessWidget {
+class MapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
