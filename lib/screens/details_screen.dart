@@ -5,9 +5,6 @@ import 'package:metro_monitor/models/details.dart';
 import 'map_screen.dart';
 
 class DetailsScreen extends StatefulWidget {
-  final code;
-
-  const DetailsScreen(this.code);
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -20,7 +17,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
   void initState() {
     super.initState();
     _metroController = MetroController();
-    _metroController.fetchDetailsList(widget.code);
   }
 
   @override
@@ -64,7 +60,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             stream: _metroController.getDetailsList,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                List<Details> list = snapshot.data.details;
+                List<Details> list = snapshot.data;
                 return Column(
                   children: list.map((line) {
                     return MetroDetailsCard(line);

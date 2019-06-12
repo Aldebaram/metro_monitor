@@ -46,10 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       return InkWell(
                         child: MetroCard(line),
                         onTap: () {
+                          _metroController.fetchDetailsList(line.codigo);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => DetailsScreen(line.codigo)));
+                                  builder: (context) => DetailsScreen()));
                         },
                       );
                     }).toList(),

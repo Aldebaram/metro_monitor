@@ -1,11 +1,12 @@
 import 'dart:async';
-
-import 'package:metro_monitor/models/details_list.dart';
+import 'package:metro_monitor/models/details.dart';
 import 'package:metro_monitor/models/metro_list.dart';
 import 'package:metro_monitor/services/metro_api.dart';
 
 class MetroController {
+
   static MetroController _metroController;
+  List<Details> _details;
 
   factory MetroController() {
     if (_metroController == null) {
@@ -15,7 +16,7 @@ class MetroController {
   }
 
   StreamController _listController = StreamController<MetroList>.broadcast();
-  StreamController _listDetailsController = StreamController<DetailsList>.broadcast();
+  StreamController _listDetailsController = StreamController<List<Details>>.broadcast();
 
   Stream get getList => _listController.stream;
   Stream get getDetailsList => _listDetailsController.stream;
@@ -32,9 +33,18 @@ class MetroController {
     _listController.add(list);
   }
 
-  Future<void> fetchDetailsList(id) async {
-    DetailsList list = await _api.fetchDetailsID(id);
-    _listDetailsController.add(list);
+  Future<void> fetchDetailsList(code) async {
+    _details = [];
+
+    List ids = await _api.fetchIdByCode(code);
+
+    await Future.forEach(ids, (id) async {
+      Details details = await _api.fetchDetails(id['id']);
+      if(details != null)
+        _details.add(details);
+        _listDetailsController.add(_details);
+    });
+
   }
 
   void dispose() {
