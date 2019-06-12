@@ -1,12 +1,12 @@
 import 'package:http/http.dart' as http;
-import 'package:metro_monitor/models/details_list.dart';
+import 'package:metro_monitor/models/details.dart';
 import 'dart:convert';
 
 import 'package:metro_monitor/models/metro_list.dart';
 
 class MetroAPI {
   final _baseAPI = "https://direto-dos-trens.appspot.com/api";
-  final _detailsLimit = 7;
+  final _detailsLimit = 12;
 
   Future<MetroList> fetchStatus() async {
     final response = await http.get(_baseAPI + '/status');
@@ -16,28 +16,23 @@ class MetroAPI {
     return null;
   }
 
-  Future<DetailsList> fetchDetailsID(code) async {
+  Future<List> fetchIdByCode(code) async {
     final response = await http.get(_baseAPI + '/status/codigo/' + code.toString());
     if (response.statusCode == 200) {
       List ids = json.decode(response.body);
-      DetailsList list = await fetchDetails(ids.getRange(0, _detailsLimit).toList());
-      return list;
+      return ids.getRange(0, _detailsLimit).toList();
     }
     return null;
   }
 
-  Future<DetailsList> fetchDetails(List ids) async {
-    
-    List details = [];
+  Future<Details> fetchDetails(id) async {
 
-    await Future.forEach(ids, (id) async {
-      var response = await http.get(_baseAPI + '/status/id/' + id['id'].toString());
-      if (response.statusCode == 200) {
-        details.add(json.decode(response.body));
-      }
-    });
+    var response = await http.get(_baseAPI + '/status/id/' + id.toString());
+    if (response.statusCode == 200) {
+      return Details.fromJson(json.decode(response.body));
+    }
 
-    return DetailsList.fromJson(details);
+    return null;
   }
 
 }
